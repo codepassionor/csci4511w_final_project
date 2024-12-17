@@ -21,6 +21,9 @@ class CityNode:
     def get_y(self):
         return self.y
     
+    def get_location(self):
+        return (self.x, self.y)
+    
     def distance_to(self, other):
         return math.sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
     
@@ -71,6 +74,12 @@ class CityGraph:
             
     def get_cities(self):
         return self.cities
+    
+    def get_city_locations(self):
+        return self.city_locations
+    
+    def get_city_at(self, location):
+        return self.cities[location]
     
     def populate_graph(self, n_cities):
         for _ in range(n_cities):

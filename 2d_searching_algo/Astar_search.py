@@ -1,220 +1,82 @@
-# Python program for A* Search Algorithm with Time and Memory Measurement
-import math
 import heapq
-import time
-import psutil
+import random
+from state_space import CityGraph
 
-# Define the Cell class
-class Cell:
-    def __init__(self):
-        # Parent cell's row index
-        self.parent_i = 0
-        # Parent cell's column index
-        self.parent_j = 0
-        # Total cost of the cell (f = g + h)
-        self.f = float('inf')
-        # Cost from start to this cell
-        self.g = float('inf')
-        # Heuristic cost from this cell to destination
-        self.h = 0
+def reconstruct_path(came_from, current):
+        path = [current]
+        while current in came_from:
+            current = came_from[current]
+            path.append(current)
+        return list(reversed(path))
 
-# Define the size of the grid
-ROW = 9
-COL = 10
+def find_path(city_graph, start, goal):
+    # find nodes
+    start_node = city_graph.get_city_at(start)
+    goal_node = city_graph.get_city_at(goal)
 
-# Check if a cell is valid (within the grid)
-def is_valid(row, col):
-    return (0 <= row < ROW) and (0 <= col < COL)
+    # priority queue
+    open_set = []
+    heapq.heappush(open_set, (0, start))
+    
+    # track prev nodes
+    came_from = {}
+    
+    # costs from start to node
+    g_score = {start: 0}
+    
+    # heuristic
+    f_score = {start: start_node.distance_to(goal_node)}
+    
+    # track explored nodes
+    closed_set = set()
+    
+    while open_set:
+        # get the node with the lowest f_score
+        current_f, current = heapq.heappop(open_set)
 
-# Check if a cell is unblocked
-def is_unblocked(grid, row, col):
-    return grid[row][col] == 1
+        current_node = city_graph.get_city_at(current)
+        
+        if current == goal:
+            path = reconstruct_path(came_from, current)
+            total_cost = sum(
+                city_graph.get_city_at(path[i]).distance_to(city_graph.get_city_at(path[i+1]))
+                for i in range(len(path) - 1)
+            )
+            return (path, total_cost)
+        
+        closed_set.add(current)
+        
+        for neighbor_node in current_node.get_neighbors():
+            neighbor = neighbor_node.get_location()
 
-# Check if a cell is the destination
-def is_destination(row, col, dest):
-    return row == dest[0] and col == dest[1]
+            if neighbor in closed_set:
+                continue
+            
+            tentative_g_score = g_score[current] + current_node.distance_to(neighbor_node)
+            
+            if neighbor not in [n[1] for n in open_set]:
+                heapq.heappush(open_set, (float('inf'), neighbor))
+            elif tentative_g_score >= g_score.get(neighbor, float('inf')):
+                continue
+            
+            came_from[neighbor] = current
+            g_score[neighbor] = tentative_g_score
+            f_score[neighbor] = tentative_g_score + neighbor_node.distance_to(goal_node)
 
-# Calculate the heuristic value of a cell (Euclidean distance to destination)
-def calculate_h_value(row, col, dest):
-    return math.sqrt((row - dest[0]) ** 2 + (col - dest[1]) ** 2)
-
-# Trace the path from source to destination
-def trace_path(cell_details, dest):
-    print("The Path is:")
-    path = []
-    row = dest[0]
-    col = dest[1]
-
-    # Trace the path from destination to source using parent cells
-    while not (cell_details[row][col].parent_i == row and cell_details[row][col].parent_j == col):
-        path.append((row, col))
-        temp_row = cell_details[row][col].parent_i
-        temp_col = cell_details[row][col].parent_j
-        row = temp_row
-        col = temp_col
-
-    # Add the source cell to the path
-    path.append((row, col))
-    # Reverse the path to get the path from source to destination
-    path.reverse()
-
-    # Print the path
-    for i in path:
-        print("->", i, end=" ")
-    print()
-
-# Implement the A* search algorithm
-def a_star_search(grid, src, dest):
-    # Check if the source and destination are valid
-    if not is_valid(src[0], src[1]) or not is_valid(dest[0], dest[1]):
-        print("Source or destination is invalid")
-        return
-
-    # Check if the source and destination are unblocked
-    if not is_unblocked(grid, src[0], src[1]) or not is_unblocked(grid, dest[0], dest[1]):
-        print("Source or the destination is blocked")
-        return
-
-    # Check if we are already at the destination
-    if is_destination(src[0], src[1], dest):
-        print("We are already at the destination")
-        return
-
-    # Initialize the closed list (visited cells)
-    closed_list = [[False for _ in range(COL)] for _ in range(ROW)]
-    # Initialize the details of each cell
-    cell_details = [[Cell() for _ in range(COL)] for _ in range(ROW)]
-
-    # Initialize the start cell details
-    i = src[0]
-    j = src[1]
-    cell_details[i][j].f = 0.0
-    cell_details[i][j].g = 0.0
-    cell_details[i][j].h = 0.0
-    cell_details[i][j].parent_i = i
-    cell_details[i][j].parent_j = j
-
-    # Initialize the open list (cells to be visited) with the start cell
-    open_list = []
-    heapq.heappush(open_list, (0.0, i, j))
-
-    # Initialize the flag for whether destination is found
-    found_dest = False
-
-    # Main loop of A* search algorithm
-    while len(open_list) > 0:
-        # Pop the cell with the smallest f value from the open list
-        p = heapq.heappop(open_list)
-
-        # Mark the cell as visited
-        i = p[1]
-        j = p[2]
-        closed_list[i][j] = True
-
-        # For each direction, check the successors
-        directions = [
-            (0, 1),    # East
-            (1, 0),    # South
-            (0, -1),   # West
-            (-1, 0),   # North
-            (1, 1),    # Southeast
-            (1, -1),   # Southwest
-            (-1, 1),   # Northeast
-            (-1, -1)   # Northwest
-        ]
-        for dir in directions:
-            new_i = i + dir[0]
-            new_j = j + dir[1]
-
-            # If the successor is valid, unblocked, and not visited
-            if is_valid(new_i, new_j) and is_unblocked(grid, new_i, new_j) and not closed_list[new_i][new_j]:
-                # If the successor is the destination
-                if is_destination(new_i, new_j, dest):
-                    # Set the parent of the destination cell
-                    cell_details[new_i][new_j].parent_i = i
-                    cell_details[new_i][new_j].parent_j = j
-                    print("The destination cell is found")
-                    # Trace and print the path from source to destination
-                    trace_path(cell_details, dest)
-                    found_dest = True
-                    return
-                else:
-                    # Calculate the new f, g, and h values
-                    g_new = cell_details[i][j].g + 1.0
-                    h_new = calculate_h_value(new_i, new_j, dest)
-                    f_new = g_new + h_new
-
-                    # If the cell is not in the open list or the new f value is smaller
-                    if cell_details[new_i][new_j].f == float('inf') or cell_details[new_i][new_j].f > f_new:
-                        # Add the cell to the open list
-                        heapq.heappush(open_list, (f_new, new_i, new_j))
-                        # Update the cell details
-                        cell_details[new_i][new_j].f = f_new
-                        cell_details[new_i][new_j].g = g_new
-                        cell_details[new_i][new_j].h = h_new
-                        cell_details[new_i][new_j].parent_i = i
-                        cell_details[new_i][new_j].parent_j = j
-
-    # If the destination is not found after visiting all cells
-    if not found_dest:
-        print("Failed to find the destination cell")
-
-# Function to measure time and memory consumption of A* Search
-def measure_a_star_performance(grid, src, dest):
-    """
-    Measures the time and memory consumption of the A* Search algorithm.
-
-    Args:
-        grid (list of lists): The grid representing the map (1 for unblocked, 0 for blocked).
-        src (list): The source cell coordinates [row, col].
-        dest (list): The destination cell coordinates [row, col].
-
-    Returns:
-        None
-    """
-    # Initialize the process for memory measurement
-    process = psutil.Process()
-
-    # Record the starting time and memory usage
-    start_time = time.time()
-    start_mem = process.memory_info().rss  # Resident Set Size in bytes
-
-    # Perform A* Search
-    a_star_search(grid, src, dest)
-
-    # Record the ending time and memory usage
-    end_time = time.time()
-    end_mem = process.memory_info().rss
-
-    # Calculate elapsed time and memory difference
-    elapsed_time = end_time - start_time
-    memory_used = end_mem - start_mem  # in bytes
-
-    print("\nA* Search Performance Metrics:")
-    print(f"Time taken: {elapsed_time:.6f} seconds")
-    print(f"Memory increase: {memory_used} bytes (approximately {memory_used / 1024:.2f} KB)")
-
-# Driver Code
-def main():
-    # Define the grid (1 for unblocked, 0 for blocked)
-    grid = [
-        [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-        [1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
-        [1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
-        [1, 1, 1, 0, 1, 1, 1, 0, 1, 0],
-        [1, 0, 1, 1, 1, 1, 0, 1, 0, 0],
-        [1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-        [1, 1, 1, 0, 0, 0, 1, 0, 0, 1]
-    ]
-
-    # Define the source and destination
-    src = [8, 0]
-    dest = [0, 0]
-
-    # Run the A* Search algorithm and measure performance
-    measure_a_star_performance(grid, src, dest)
-
+# demo
 if __name__ == "__main__":
-    main()
+    city_graph = CityGraph(1000, 1000)
+    city_graph.populate_graph(100)
+
+    city_locations = city_graph.get_city_locations()
+
+    print(city_graph.get_cities())
+
+    [start_loc, goal_loc] = random.choices(city_locations, k=2)
+
+    print("start:", start_loc)
+    print("goal:", goal_loc)
+
+    (path, total_cost) = find_path(city_graph, start_loc, goal_loc)
+    print("path:", " -> ".join([str(x) for x in path]))
+    print(f"total cost: {total_cost:.2f}")
