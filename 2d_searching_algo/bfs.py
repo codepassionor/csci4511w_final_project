@@ -1,47 +1,42 @@
-import time
-import psutil
+import state_space
+import random
 from collections import deque
 
-def bfs(graph, start):
-    visited = []
-    queue = deque([start])
 
+def bfs(graph, start, end):
+    visited = {}
+    queue = deque([(start, [start])])
     while queue:
-        node = queue.popleft()
-        if node not in visited:
-            visited.append(node)
-            for neighbor in graph[node]:
-                if neighbor not in visited:
-                    queue.append(neighbor)
-
-    return visited
+        current_loc, path = queue.popleft()
+        if current_loc not in visited:
+            current_node = graph.get_city_at(current_loc)
+            visited[current_loc] = path
+            for neighbor in current_node.get_neighbors():
+                neighbor_loc = neighbor.get_location()
+                if neighbor_loc not in visited:
+                    if neighbor_loc == end:
+                        path = path + [neighbor_loc]
+                        total_cost = sum(
+                            graph.cities[path[i]].distance_to(graph.cities[path[i+1]])
+                            for i in range(len(path) - 1)
+                        )
+                        return path, total_cost, len(visited)
+                    else:
+                        new_path = path + [neighbor_loc]
+                        queue.append((neighbor_loc, new_path))
+    return None
 
 # Example graph
-graph = {
-    'A': ['B', 'C'],
-    'B': ['D', 'E'],
-    'C': ['F'],
-    'D': [],
-    'E': ['F'],
-    'F': []
-}
+city_graph = state_space.CityGraph(1000, 1000)
+city_graph.populate_graph(100)
+city_locations = city_graph.get_city_locations()
+[start, end] = random.choices(city_locations, k=2)
 
-# Record the starting time and memory usage
-process = psutil.Process()
-start_time = time.time()
-start_mem = process.memory_info().rss  # Resident Set Size in bytes
+visited_cities = bfs(city_graph, start, end)
 
-# Perform BFS
-result = bfs(graph, 'A')
-
-# Record the ending time and memory usage
-end_time = time.time()
-end_mem = process.memory_info().rss
-
-# Calculate elapsed time and memory difference
-elapsed_time = end_time - start_time
-memory_used = end_mem - start_mem  # in bytes, can convert to KB or MB if needed
-
-print("BFS Result:", result)
-print("Time taken: {:.6f} seconds".format(elapsed_time))
-print("Memory increase: {} bytes (approximately {:.2f} KB)".format(memory_used, memory_used / 1024.0))
+path, total_cost, visited_locations = visited_cities
+        
+print("Path:", " -> ".join([str(x) for x in path]))
+print(f"Path length: {len(path)}")
+print(f"Total path cost: {total_cost:.2f}")
+print(f"Total locations visited: {visited_locations}")
