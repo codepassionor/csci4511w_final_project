@@ -1,31 +1,41 @@
 import state_space
-import math
 import random
 from collections import deque
 
 
 def bfs(graph, start, end):
-    start_node = graph.cities[start]
-    visited = []
-    queue = deque([start_node])
+    visited = {}
+    queue = deque([(start, [start])])
     while queue:
-        node = queue.popleft()
-        if node not in visited:
-            visited.append(node)
-            for neighbor in node.get_neighbors():
-                if neighbor not in visited:
-                    neighbor_loc = (neighbor.x, neighbor.y)
+        current_loc, path = queue.popleft()
+        if current_loc not in visited:
+            current_node = graph.get_city_at(current_loc)
+            visited[current_loc] = path
+            for neighbor in current_node.get_neighbors():
+                neighbor_loc = neighbor.get_location()
+                if neighbor_loc not in visited:
                     if neighbor_loc == end:
-                        return visited
+                        total_cost = sum(
+                            graph.cities[path[i]].distance_to(graph.cities[path[i+1]])
+                            for i in range(len(path) - 1)
+                        )
+                        return path, total_cost, len(visited)
                     else:
-                        queue.append(neighbor)
+                        new_path = path + [neighbor_loc]
+                        queue.append((neighbor_loc, new_path))
     return None
 
 # Example graph
 city_graph = state_space.CityGraph(1000, 1000)
 city_graph.populate_graph(100)
-cities = city_graph.city_locations
-[start, end] = random.choices(cities, k=2)
+city_locations = city_graph.get_city_locations()
+[start, end] = random.choices(city_locations, k=2)
 
 visited_cities = bfs(city_graph, start, end)
-print(len(visited_cities))
+
+path, total_cost, visited_locations = visited_cities
+        
+print("path:", " -> ".join([str(x) for x in path]))
+print(f"\nPath length: {len(path)}")
+print(f"Total path cost: {total_cost:.2f}")
+print(f"Total locations visited: {visited_locations}")
