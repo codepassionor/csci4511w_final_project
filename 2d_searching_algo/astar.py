@@ -1,7 +1,4 @@
 import heapq
-import random
-from state_space import CityGraph
-from bfs import bfs
 
 def reconstruct_path(came_from, current):
         path = [current]
@@ -10,10 +7,10 @@ def reconstruct_path(came_from, current):
             path.append(current)
         return list(reversed(path))
 
-def find_path(city_graph, start, goal):
+def astar(graph, start, goal):
     # find nodes
-    start_node = city_graph.get_city_at(start)
-    goal_node = city_graph.get_city_at(goal)
+    start_node = graph.get_city_at(start)
+    goal_node = graph.get_city_at(goal)
 
     # priority queue
     open_set = []
@@ -30,14 +27,14 @@ def find_path(city_graph, start, goal):
     
     while open_set:
         # get the node with the lowest f_score
-        current_f, current = heapq.heappop(open_set)
+        _, current = heapq.heappop(open_set)
 
         if current in closed_set:
             continue
 
         closed_set.add(current)
 
-        current_node = city_graph.get_city_at(current)
+        current_node = graph.get_city_at(current)
 
         # print(current_node, len(closed_set))
 
@@ -45,7 +42,7 @@ def find_path(city_graph, start, goal):
         if current == goal:
             path = reconstruct_path(came_from, current)
             total_cost = sum(
-                city_graph.get_city_at(path[i]).distance_to(city_graph.get_city_at(path[i+1]))
+                graph.get_city_at(path[i]).distance_to(graph.get_city_at(path[i+1]))
                 for i in range(len(path) - 1)
             )
             return (path, total_cost, len(closed_set))
