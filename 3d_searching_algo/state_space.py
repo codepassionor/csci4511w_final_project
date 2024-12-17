@@ -58,7 +58,7 @@ class CheckpointGraph:
             y = random.randint(0, self.width)
             z = random.randint(0, self.height)
             
-            location = (x, y)
+            location = (x, y, z)
             
             if location not in self.checkpoints:
                 new_node = CheckpointNode(x, y, z)
