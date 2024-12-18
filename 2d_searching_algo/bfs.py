@@ -1,7 +1,8 @@
 from collections import deque
-
+import time
 
 def bfs(graph, start, end):
+    start_time = time.time()
     visited = {}
     queue = deque([(start, [start])])
     while queue:
@@ -18,8 +19,8 @@ def bfs(graph, start, end):
                             graph.cities[path[i]].distance_to(graph.cities[path[i+1]])
                             for i in range(len(path) - 1)
                         )
-                        return path, total_cost, len(visited)
+                        runtime = time.time() - start_time
+                        return (path, total_cost, len(visited), runtime)
                     else:
                         new_path = path + [neighbor_loc]
                         queue.append((neighbor_loc, new_path))
-    return None

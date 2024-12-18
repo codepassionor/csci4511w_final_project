@@ -1,4 +1,5 @@
 import heapq
+import time
 
 def reconstruct_path(came_from, current):
         path = [current]
@@ -8,6 +9,8 @@ def reconstruct_path(came_from, current):
         return list(reversed(path))
 
 def astar(graph, start, goal):
+    start_time = time.time()
+
     # find nodes
     start_node = graph.get_city_at(start)
     goal_node = graph.get_city_at(goal)
@@ -45,7 +48,8 @@ def astar(graph, start, goal):
                 graph.get_city_at(path[i]).distance_to(graph.get_city_at(path[i+1]))
                 for i in range(len(path) - 1)
             )
-            return (path, total_cost, len(closed_set))
+            runtime = time.time() - start_time
+            return (path, total_cost, len(closed_set), runtime)
         
         for neighbor_node in current_node.get_neighbors():
             neighbor = neighbor_node.get_location()

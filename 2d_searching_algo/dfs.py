@@ -1,4 +1,7 @@
+import time
+
 def dfs(graph, start, end):
+    start_time = time.time()
     start_node = graph.get_city_at(start)
     end_node = graph.get_city_at(end)
     
@@ -13,7 +16,8 @@ def dfs(graph, start, end):
         visited.add(current_loc)
 
         if current_node == end_node:
-            return (current_path, current_cost, len(visited))
+            runtime = time.time() - start_time
+            return (current_path, current_cost, len(visited), runtime)
 
         for neighbor in current_node.get_neighbors():
             neighbor_location = neighbor.get_location()
