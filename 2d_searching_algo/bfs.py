@@ -25,18 +25,3 @@ def bfs(graph, start, end):
                         new_path = path + [neighbor_loc]
                         queue.append((neighbor_loc, new_path))
     return None
-
-# Example graph
-city_graph = state_space.CityGraph(1000, 1000)
-city_graph.populate_graph(100)
-city_locations = city_graph.get_city_locations()
-[start, end] = random.choices(city_locations, k=2)
-
-visited_cities = bfs(city_graph, start, end)
-
-path, total_cost, visited_locations = visited_cities
-        
-print("Path:", " -> ".join([str(x) for x in path]))
-print(f"Path length: {len(path)}")
-print(f"Total path cost: {total_cost:.2f}")
-print(f"Total locations visited: {visited_locations}")
