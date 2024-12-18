@@ -98,4 +98,8 @@ if __name__ == "__main__":
     # with open("final_stats.txt", "a") as file:
     #     file.write("-------------3D, 50x50x50, 50% density (62500 nodes), k=2-------------\n\n")
     # run_tests(50, 50, 50, 2, 62500, 30)
+
+    with open("final_stats.txt", "a") as file:
+        file.write("-------------3D, 50x50x50, 10% density (12500 nodes), k=10-------------\n\n")
+    run_tests(50, 50, 50, 10, 12500, 30)
     pass

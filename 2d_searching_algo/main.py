@@ -92,9 +92,13 @@ if __name__ == "__main__":
 
     # with open("final_stats.txt", "a") as file:
     #     file.write("-------------2D, 100x100, 10% density (1000 nodes), k=2-------------\n\n")
-    # run_tests(100, 1000, 2, 100, 30)
+    # run_tests(100, 100, 2, 1000, 30)
 
     # with open("final_stats.txt", "a") as file:
     #     file.write("-------------2D, 100x100, 50% density (5000 nodes), k=2-------------\n\n")
-    # run_tests(100, 5000, 2, 100, 30)
+    # run_tests(100, 100, 2, 5000, 30)
+
+    with open("final_stats.txt", "a") as file:
+        file.write("-------------2D, 100x100, 10% density (1000 nodes), k=10-------------\n\n")
+    run_tests(100, 100, 10, 1000, 30)
     pass
