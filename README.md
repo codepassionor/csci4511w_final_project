@@ -2,19 +2,34 @@
 
 **Project Outline:**
 
-1. **Environments:**  
-   - Test on 2D and 3D grid worlds of varying sizes and obstacle densities.
+1.  **Environments:**
 
-2. **Algorithms:**  
-   - **Uninformed:** IDDFS, BFS, DFS  
-   - **Informed:** A* (with Manhattan heuristic), Greedy Best-First, Uniform-Cost
+- Test on 2D and 3D worlds of varying sizes, densities, and connectivity levels
 
-3. **Metrics:**  
-   - **Test Time:** Average runtime to find a solution or determine no solution exists.  
-   - **Accuracy:** Percentage of trials that yield the shortest correct path.  
-   - **Path Optimality:** Measure the path cost relative to the known shortest path (Optimality Ratio and Excess Steps).  
-   - **Resource Utilization:** Memory usage (peak and average), number of node expansions.  
-   - **Robustness and Reliability:** Success rate in finding any valid path, frequency of failure modes.  
-   - **Scalability Indicators:** Observe how performance and memory scale with increasing grid sizes and complexity, and how performance changes with varying obstacle distributions.  
-   - **Consistency:** Variability in runtime and accuracy (e.g., standard deviations).
+-  **Sizes:** total range of node locations
+	- 100x100 map for 2D city graph
+	- 50x50x50 map for 3D checkpoint graph
 
+-  **Densities:** calculated as `total nodes / size`
+	- 1%
+	- 10%
+	- 50%
+- **Connectivity:** calculated as `(total edges / total nodes) - 1`
+	- k = 2
+	- k = 10
+
+2.  **Algorithms:**
+
+-  **Uninformed:** BFS, DFS
+
+-  **Informed:** A* (with Euclidean straight line distance heuristic)
+
+  
+
+3.  **Metrics:**
+
+-  **Runtime:** average runtime to find a solution or determine no solution exists.
+
+-  **Number of nodes explored:**  how many nodes does each algorithm have to search through before getting to the goal.
+
+-  **Path cost:** cost of getting from the start node to the goal node given the algorithm's final path
