@@ -35,11 +35,12 @@ class CityNode:
 
 
 class CityGraph:
-    def __init__(self, width, height):
+    def __init__(self, width, height, connectivity):
         self.width = width
         self.height = height
         self.cities = {}
         self.city_locations = [] # amoritized cost of O(1) for choosing random
+        self.connectivity = connectivity
     
     def generate_unique_city(self):
         total_possible_locations = self.width * self.height
@@ -52,23 +53,19 @@ class CityGraph:
             y = random.randint(0, self.height)
             
             location = (x, y)
+
             
             if location not in self.cities:
                 new_node = CityNode(x, y)
 
-                if self.cities:
-                    random_city = random.choice(self.city_locations)
+                if len(self.city_locations) > self.connectivity:
+                    random_cities = random.choices(self.city_locations, k=self.connectivity)
+                    for random_city in random_cities:
+                        new_node.add_neighbor(self.cities[random_city])
+                        self.cities[random_city].add_neighbor(new_node)
 
-                    self.cities[location] = new_node
-
-                    new_node.add_neighbor(self.cities[random_city])
-                    self.cities[random_city].add_neighbor(new_node)
-
-                    self.city_locations.append(location)
-
-                else:
-                    self.cities[location] = new_node
-                    self.city_locations.append(location)
+                self.cities[location] = new_node
+                self.city_locations.append(location)
 
                 return
             
