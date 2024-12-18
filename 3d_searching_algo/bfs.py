@@ -8,7 +8,7 @@ def bfs(graph, start, end):
     while queue:
         current_loc, path = queue.popleft()
         if current_loc not in visited:
-            current_node = graph.get_city_at(current_loc)
+            current_node = graph.get_checkpoint_at(current_loc)
             visited[current_loc] = path
             for neighbor in current_node.get_neighbors():
                 neighbor_loc = neighbor.get_location()
@@ -16,7 +16,7 @@ def bfs(graph, start, end):
                     if neighbor_loc == end:
                         path = path + [neighbor_loc]
                         total_cost = sum(
-                            graph.get_city_at(path[i]).distance_to(graph.get_city_at(path[i+1]))
+                            graph.get_checkpoint_at(path[i]).distance_to(graph.get_checkpoint_at(path[i+1]))
                             for i in range(len(path) - 1)
                         )
                         runtime = time.time() - start_time

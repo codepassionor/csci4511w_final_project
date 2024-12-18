@@ -1,0 +1,36 @@
+-------------3D, 50x50x50, 1% density (1250 nodes), k=2-------------
+
+-------------ASTAR STATS-------------
+AVG # OF LOCATIONS EXPLORED: 134.28
+AVG PATH COST: 55.89
+AVG RUNTIME: 0.00
+
+-------------BFS STATS-------------
+AVG # OF LOCATIONS EXPLORED: 96.86
+AVG PATH COST: 53.71
+AVG RUNTIME: 0.00
+
+-------------DFS STATS-------------
+AVG # OF LOCATIONS EXPLORED: 167.54
+AVG PATH COST: 4947.25
+AVG RUNTIME: 0.00
+
+-------------3D, 50x50x50, 10% density (12500 nodes), k=2-------------
+
+-------------ASTAR STATS-------------
+AVG # OF LOCATIONS EXPLORED: 1087.25
+AVG PATH COST: 63.71
+AVG RUNTIME: 0.01
+
+-------------BFS STATS-------------
+AVG # OF LOCATIONS EXPLORED: 818.64
+AVG PATH COST: 62.89
+AVG RUNTIME: 0.00
+
+-------------DFS STATS-------------
+AVG # OF LOCATIONS EXPLORED: 1588.99
+AVG PATH COST: 49369.26
+AVG RUNTIME: 0.10
+
+-------------3D, 50x50x50, 50% density (62500 nodes), k=2-------------
+

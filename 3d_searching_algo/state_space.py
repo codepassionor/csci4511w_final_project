@@ -1,7 +1,6 @@
 import random
 import math
 
-
 class CheckpointNode:
     def __init__(self, x, y, z):
         self.x = x
@@ -25,6 +24,9 @@ class CheckpointNode:
     def get_z(self):
         return self.z
     
+    def get_location(self):
+        return (self.x, self.y, self.z)
+    
     def distance_to(self, other_node):
         return math.sqrt(
             (self.x - other_node.x)**2 + 
@@ -40,17 +42,18 @@ class CheckpointNode:
 
 
 class CheckpointGraph:
-    def __init__(self, length, width, height):
+    def __init__(self, length, width, height, connectivity):
         self.length = length
         self.width = width
         self.height = height
         self.checkpoints = {}
         self.checkpoint_locations = [] # amoritized cost of O(1) for choosing random
+        self.connectivity = connectivity
     
     def generate_unique_checkpoint(self):
         total_possible_locations = self.length * self.width * self.height
         
-        if len(self.cities) >= total_possible_locations:
+        if len(self.checkpoint_locations) >= total_possible_locations:
             raise RuntimeError("All possible unique locations have been used.")
         
         while True:
@@ -63,24 +66,25 @@ class CheckpointGraph:
             if location not in self.checkpoints:
                 new_node = CheckpointNode(x, y, z)
 
-                if self.checkpoints:
-                    random_checkpoint = random.choice(self.checkpoint_locations)
+                if len(self.checkpoint_locations) > self.connectivity:
+                    random_checkpoints = random.choices(self.checkpoint_locations, k=self.connectivity)
+                    for random_checkpoint in random_checkpoints:
+                        new_node.add_neighbor(self.checkpoints[random_checkpoint])
+                        self.checkpoints[random_checkpoint].add_neighbor(new_node)
 
-                    self.checkpoints[location] = new_node
-
-                    new_node.add_neighbor(self.checkpoints[random_checkpoint])
-                    self.checkpoints[random_checkpoint].add_neighbor(new_node)
-
-                    self.checkpoint_locations.append(location)
-
-                else:
-                    self.checkpoints[location] = new_node
-                    self.checkpoint_locations.append(location)
+                self.checkpoints[location] = new_node
+                self.checkpoint_locations.append(location)
 
                 return
             
     def get_checkpoints(self):
         return self.checkpoints
+    
+    def get_checkpoint_locations(self):
+        return self.checkpoint_locations
+    
+    def get_checkpoint_at(self, location):
+        return self.checkpoints[location]
     
     def populate_graph(self, n_checkpoints):
         for _ in range(n_checkpoints):
