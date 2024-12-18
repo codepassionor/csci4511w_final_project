@@ -23,24 +23,24 @@ def find_path(city_graph, start, goal):
     came_from = {}
     
     # costs from start to node
-    g_score = {start: 0}
-    
-    # heuristic
-    f_score = {start: start_node.distance_to(goal_node)}
+    g_scores = {start: 0}
     
     # track explored nodes
     closed_set = set()
-
-    # track visited
-    visited = set()
     
     while open_set:
         # get the node with the lowest f_score
         current_f, current = heapq.heappop(open_set)
 
+        if current in closed_set:
+            continue
+
+        closed_set.add(current)
+
         current_node = city_graph.get_city_at(current)
 
-        visited.add(current)
+        # print(current_node, len(closed_set))
+
         
         if current == goal:
             path = reconstruct_path(came_from, current)
@@ -50,53 +50,22 @@ def find_path(city_graph, start, goal):
             )
             return (path, total_cost, len(closed_set))
         
-        closed_set.add(current)
-        
         for neighbor_node in current_node.get_neighbors():
             neighbor = neighbor_node.get_location()
 
             if neighbor in closed_set:
                 continue
+
+            came_from[neighbor] = current
+
+            # path from start to node
+            g_score = g_scores[current] + current_node.distance_to(neighbor_node)
+            g_scores[neighbor] = g_score
+
+            # heuristic from node to goal
+            h_score = neighbor_node.distance_to(goal_node)
             
-            # Calculate tentative g_score
-            tentative_g_score = g_score[current] + current_node.distance_to(neighbor_node)
+            # f(x) final value
+            f_score = g_score + h_score
             
-            # Check if this is a better path
-            if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
-                # Update path
-                came_from[neighbor] = current
-                g_score[neighbor] = tentative_g_score
-                
-                # Calculate f_score
-                f_score_value = tentative_g_score + neighbor_node.distance_to(goal_node)
-                
-                # Add to open set
-                heapq.heappush(open_set, (f_score_value, neighbor))
-
-# demo
-if __name__ == "__main__":
-    city_graph = CityGraph(1000, 1000)
-    city_graph.populate_graph(100)
-
-    city_locations = city_graph.get_city_locations()
-
-    print(city_graph.get_cities())
-
-    [start_loc, goal_loc] = random.choices(city_locations, k=2)
-
-    print("start:", start_loc)
-    print("goal:", goal_loc)
-
-    (path, total_cost, visited) = find_path(city_graph, start_loc, goal_loc)
-    print("-------------ASTAR-------------")
-    print("Path:", " -> ".join([str(x) for x in path]))
-    print(f"Path length: {len(path)}")
-    print(f"Total path cost: {total_cost:.2f}")
-    print(f"Total locations visited: {visited}")
-
-    (path, total_cost, visited) = bfs(city_graph, start_loc, goal_loc)
-    print("-------------BFS-------------")
-    print("Path:", " -> ".join([str(x) for x in path]))
-    print(f"Path length: {len(path)}")
-    print(f"Total path cost: {total_cost:.2f}")
-    print(f"Total locations visited: {visited}")
+            heapq.heappush(open_set, (f_score, neighbor))
