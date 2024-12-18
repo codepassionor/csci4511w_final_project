@@ -72,17 +72,17 @@ def run_tests(x, y, connectivity, n_nodes, n_tests):
         file.write("-------------ASTAR STATS-------------\n")
         file.write(f"AVG # OF LOCATIONS EXPLORED: {sum_astar_locations_explored / 100:.2f}\n")
         file.write(f"AVG PATH COST: {sum_astar_path_costs / 100:.2f}\n")
-        file.write(f"AVG RUNTIME: {sum_astar_runtime / 100:.2f}\n")
+        file.write(f"AVG RUNTIME: {sum_astar_runtime / 100}\n")
         file.write("\n")
         file.write("-------------BFS STATS-------------\n")
         file.write(f"AVG # OF LOCATIONS EXPLORED: {sum_bfs_locations_explored / 100:.2f}\n")
         file.write(f"AVG PATH COST: {sum_bfs_path_costs / 100:.2f}\n")
-        file.write(f"AVG RUNTIME: {sum_bfs_runtime / 100:.2f}\n")
+        file.write(f"AVG RUNTIME: {sum_bfs_runtime / 100}\n")
         file.write("\n")
         file.write("-------------DFS STATS-------------\n")
         file.write(f"AVG # OF LOCATIONS EXPLORED: {sum_dfs_locations_explored / 100:.2f}\n")
         file.write(f"AVG PATH COST: {sum_dfs_path_costs / 100:.2f}\n")
-        file.write(f"AVG RUNTIME: {sum_dfs_runtime / 100:.2f}\n\n")
+        file.write(f"AVG RUNTIME: {sum_dfs_runtime / 100}\n\n")
 
 
 if __name__ == "__main__":
