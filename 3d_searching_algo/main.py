@@ -17,7 +17,8 @@ def run_tests(x, y, z, connectivity, n_nodes, n_tests):
     sum_bfs_runtime = 0
     sum_dfs_runtime = 0
 
-    for _ in range(n_tests):
+    for i in range(n_tests):
+        print(i)
         checkpoint_graph = CheckpointGraph(x, y, z, connectivity)
         checkpoint_graph.populate_graph(n_nodes)
 
@@ -86,15 +87,15 @@ def run_tests(x, y, z, connectivity, n_nodes, n_tests):
 
 
 if __name__ == "__main__":
-    with open("final_stats.txt", "a") as file:
-        file.write("-------------3D, 50x50x50, 1% density (1250 nodes), k=2-------------\n\n")
-    run_tests(50, 50, 50, 2, 1250, 30)
+    # with open("final_stats.txt", "a") as file:
+    #     file.write("-------------3D, 50x50x50, 1% density (1250 nodes), k=2-------------\n\n")
+    # run_tests(50, 50, 50, 2, 1250, 30)
 
-    with open("final_stats.txt", "a") as file:
-        file.write("-------------3D, 50x50x50, 10% density (12500 nodes), k=2-------------\n\n")
-    run_tests(50, 50, 50, 2, 12500, 30)
+    # with open("final_stats.txt", "a") as file:
+    #     file.write("-------------3D, 50x50x50, 10% density (12500 nodes), k=2-------------\n\n")
+    # run_tests(50, 50, 50, 2, 12500, 30)
 
-    with open("final_stats.txt", "a") as file:
-        file.write("-------------3D, 50x50x50, 50% density (62500 nodes), k=2-------------\n\n")
-    run_tests(50, 50, 50, 2, 62500, 30)
+    # with open("final_stats.txt", "a") as file:
+    #     file.write("-------------3D, 50x50x50, 50% density (62500 nodes), k=2-------------\n\n")
+    # run_tests(50, 50, 50, 2, 62500, 30)
     pass

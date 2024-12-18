@@ -34,3 +34,18 @@ AVG RUNTIME: 0.10
 
 -------------3D, 50x50x50, 50% density (62500 nodes), k=2-------------
 
+-------------ASTAR STATS-------------
+AVG # OF LOCATIONS EXPLORED: 5701.75
+AVG PATH COST: 75.63
+AVG RUNTIME: 0.04
+
+-------------BFS STATS-------------
+AVG # OF LOCATIONS EXPLORED: 3994.86
+AVG PATH COST: 79.63
+AVG RUNTIME: 0.01
+
+-------------DFS STATS-------------
+AVG # OF LOCATIONS EXPLORED: 9053.24
+AVG PATH COST: 271180.60
+AVG RUNTIME: 11.13
+
