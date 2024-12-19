@@ -86,6 +86,7 @@ def run_tests(x, y, connectivity, n_nodes, n_tests):
 
 
 if __name__ == "__main__":
+    # RUN TESTS FOR 3 DENSITY LEVELS (1%, 10%, 50%)
     # with open("final_stats.txt", "a") as file:
     #     file.write("-------------2D, 100x100, 1% density (100 nodes), k=2-------------\n\n")
     # run_tests(100, 100, 2, 100, 30)
@@ -98,6 +99,7 @@ if __name__ == "__main__":
     #     file.write("-------------2D, 100x100, 50% density (5000 nodes), k=2-------------\n\n")
     # run_tests(100, 100, 2, 5000, 30)
 
+    # RUN TEST FOR 10-k CONNECTIVITY ON 10%
     with open("final_stats.txt", "a") as file:
         file.write("-------------2D, 100x100, 10% density (1000 nodes), k=10-------------\n\n")
     run_tests(100, 100, 10, 1000, 30)
