@@ -38,9 +38,9 @@
 - 2D tests:
   - Go to `main.py` within the `2d_searching_algo` directory, scroll to the end, and uncomment the first 3 blocks under _"RUN TESTS FOR 3 DENSITY LEVELS (1%, 10%, 50%)"_
   - To obtain the test for 10-k with a 10% density level, run the last block
+> [!WARNING]
+> The 50% density test (3rd block) is quite computationally intensive and may take several minutes or hours.
 - 3D tests:
-  > [!WARNING]
-  > The 50% density test (3rd block) is quite computationally intensive and may take several minutes or hours.
   - Go to `main.py` within the `3d_searching_algo` directory, scroll to the end, and uncomment the first 3 blocks under _"RUN TESTS FOR 3 DENSITY LEVELS (1%, 10%, 50%)"_
   - To obtain the test for 10-k with a 10% density level, run the last block
 - You are free to change the size, density levels, connectivity levels, or number of tests as you like
